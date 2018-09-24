@@ -61,7 +61,7 @@ class TokenBase(Base):
             if not token:
                 abort(401)
 
-            if token.key.user_agent != user_agent or token.remote_attr != remote_addr:
+            if token.key.user_agent != user_agent or token.client_ip != remote_addr:
                 # token generation 당시의 정보와 대조
                 abort(403)
 
@@ -98,4 +98,4 @@ class RefreshTokenModel(TokenBase):
     def refresh(cls, identity, user_agent, remote_addr):
         token = cls._certify(identity, user_agent, remote_addr)
 
-        return cls.create_token(token.key.user, user_agent, remote_addr)
+        return cls.create_token(token.key.owner, user_agent, remote_addr)
