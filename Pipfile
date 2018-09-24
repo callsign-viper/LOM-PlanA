@@ -11,6 +11,7 @@ mongoengine = "*"
 flasgger = "*"
 flask-cors = "*"
 flask-validation = "*"
+flask-mongoengine = "*"
 
 [dev-packages]
 
