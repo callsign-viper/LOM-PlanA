@@ -59,7 +59,7 @@ class TokenBase(Base):
             token = cls.objects(identity=UUID(identity)).first()
 
             if not token:
-                abort(403)
+                abort(401)
 
             if token.key.user_agent != user_agent or token.remote_attr != remote_addr:
                 # token generation 당시의 정보와 대조
