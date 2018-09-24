@@ -1,4 +1,4 @@
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.extensions import mongoengine
 from app.models import Base
@@ -42,13 +42,13 @@ class UserModel(Base):
         return bool(cls.objects(id=id))
 
     @classmethod
-    def signup(cls, id, pw, name, nickname=None, bio=None):
+    def signup(cls, id, plain_pw, name, nickname=None, bio=None):
         if cls.is_id_exist(id):
             return False
 
         return cls(
             id=id,
-            pw=pw,
+            pw=generate_password_hash(plain_pw),
             name=name,
             nickname=nickname,
             bio=bio
