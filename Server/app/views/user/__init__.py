@@ -9,4 +9,5 @@ api.add_resource(auth.Auth, '/auth')
 api.add_resource(auth.Refresh, '/refresh')
 
 api.add_resource(signup.CheckIDIsAvailable, '/check/id/<id>')
+api.add_resource(signup.CheckEmailIsAvailable, '/check/email/<email>')
 api.add_resource(signup.Signup, '/signup')

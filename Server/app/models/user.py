@@ -19,6 +19,10 @@ class UserModel(Base):
         required=True
     )
 
+    email = mongoengine.StringField(
+        required=True
+    )
+
     name = mongoengine.StringField(
         required=True,
         min_length=2,
@@ -42,13 +46,21 @@ class UserModel(Base):
         return bool(cls.objects(id=id))
 
     @classmethod
-    def signup(cls, id, plain_pw, name, nickname=None, bio=None):
+    def is_email_exist(cls, email):
+        return bool(cls.objects(email=email))
+
+    @classmethod
+    def signup(cls, id, plain_pw, email, name, nickname=None, bio=None):
         if cls.is_id_exist(id):
+            return False
+
+        if cls.is_email_exist(email):
             return False
 
         return cls(
             id=id,
             pw=generate_password_hash(plain_pw),
+            email=email,
             name=name,
             nickname=nickname,
             bio=bio
