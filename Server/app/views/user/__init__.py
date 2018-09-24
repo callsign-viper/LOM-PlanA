@@ -5,5 +5,7 @@ from app.views.user import alteration, auth, signup
 
 api = Api(api_v1_blueprint)
 
+api.add_resource(auth.Auth, '/auth')
+
 api.add_resource(signup.CheckIDIsAvailable, '/check/id/<id>')
 api.add_resource(signup.Signup, '/signup')
