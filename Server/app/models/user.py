@@ -1,3 +1,5 @@
+from werkzeug.security import check_password_hash
+
 from app.extensions import mongoengine
 from app.models import Base
 
@@ -35,3 +37,31 @@ class UserModel(Base):
         max_length=85
     )
 
+    @classmethod
+    def is_id_exist(cls, id):
+        return bool(cls.objects(id=id))
+
+    @classmethod
+    def signup(cls, id, pw, name, nickname=None, bio=None):
+        if cls.is_id_exist(id):
+            return False
+
+        return cls(
+            id=id,
+            pw=pw,
+            name=name,
+            nickname=nickname,
+            bio=bio
+        ).save()
+
+    @classmethod
+    def certify(cls, id, plain_pw):
+        user = cls.objects(id=id).first()
+
+        if not user:
+            return False
+        else:
+            if check_password_hash(user.pw, plain_pw):
+                return user
+            else:
+                return False
