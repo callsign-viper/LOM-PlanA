@@ -4,7 +4,7 @@ from werkzeug.exceptions import HTTPException
 from app import extensions
 from app.blueprints import api_v1_blueprint
 from app.hooks.error import broad_exception_error_handler, http_exception_handler
-from app.hooks.request import after_request
+from app.hooks.request import after_request, before_request
 
 # -- API load
 from app.views import user
@@ -36,8 +36,9 @@ def register_blueprints(app):
 
 def register_hooks(app: Flask):
     app.after_request(after_request)
+    app.before_request(before_request)
     app.register_error_handler(HTTPException, http_exception_handler)
-    app.register_error_handler(Exception, broad_exception_error_handler())
+    app.register_error_handler(Exception, broad_exception_error_handler)
 
 
 def create_app(*config_cls) -> Flask:
@@ -50,5 +51,6 @@ def create_app(*config_cls) -> Flask:
 
     register_extensions(app)
     register_blueprints(app)
+    register_hooks(app)
 
     return app
