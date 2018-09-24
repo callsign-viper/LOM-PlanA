@@ -20,4 +20,4 @@ class Base(mongoengine.Document):
     def save(self, *args, **kwargs):
         self.updated_at = datetime.now()
 
-        super(Base, self).save(*args, **kwargs)
+        return super(Base, self).save(*args, **kwargs)
