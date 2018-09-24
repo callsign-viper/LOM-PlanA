@@ -9,6 +9,8 @@ flask-restful = "*"
 flask-jwt-extended = "*"
 mongoengine = "*"
 flasgger = "*"
+flask-cors = "*"
+flask-validation = "*"
 
 [dev-packages]
 
