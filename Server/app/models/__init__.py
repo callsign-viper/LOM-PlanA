@@ -1,19 +1,19 @@
 from datetime import datetime
 
-from app.extensions import mongoengine
+from mongoengine import *
 
 
-class Base(mongoengine.Document):
+class Base(Document):
     meta = {
         'abstract': True,
         'allow_inheritance': True
     }
 
-    created_at = mongoengine.DateTimeField(
+    created_at = DateTimeField(
         default=datetime.now
     )
 
-    updated_at = mongoengine.DateTimeField(
+    updated_at = DateTimeField(
         default=datetime.now
     )
 
