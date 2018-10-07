@@ -3,8 +3,8 @@ from typing import Callable
 
 from flask import abort
 from flask_jwt_extended import create_access_token, create_refresh_token
+from mongoengine import *
 
-from app.extensions import mongoengine
 from app.models import Base
 from app.models.user import UserModel
 
@@ -15,27 +15,27 @@ class TokenBase(Base):
         'allow_inheritance': True
     }
 
-    class Key(mongoengine.EmbeddedDocument):
-        owner = mongoengine.ReferenceField(
+    class Key(EmbeddedDocument):
+        owner = ReferenceField(
             document_type=UserModel,
             required=True
         )
 
-        user_agent = mongoengine.StringField(
+        user_agent = StringField(
             required=True
         )
 
-    key = mongoengine.EmbeddedDocumentField(
+    key = EmbeddedDocumentField(
         document_type=Key,
         primary_key=True
     )
     # 여러 필드를 합쳐 PK로 두기 위함
 
-    client_ip = mongoengine.StringField(
+    client_ip = StringField(
         required=True
     )
 
-    identity = mongoengine.UUIDField(
+    identity = UUIDField(
         unique=True,
         default=uuid4
     )
@@ -83,7 +83,7 @@ class TokenBase(Base):
             token = cls.objects(identity=UUID(identity)).first()
 
             if not token:
-                abort(401)
+                abort(401, 'invalid identity.')
 
             if token.key.user_agent != user_agent or token.client_ip != remote_addr:
                 # token generation 당시의 정보와 대조
@@ -92,7 +92,7 @@ class TokenBase(Base):
             return token
 
         except ValueError:
-            abort(422)
+            abort(422, 'token identity is invalid.')
 
 
 class AccessTokenModel(TokenBase):

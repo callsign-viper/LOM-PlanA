@@ -1,7 +1,7 @@
 from flask_restful import Api
 
 from app.blueprints import api_v1_blueprint
-from app.views.user import alteration, auth, signup
+from app.views.user import auth, signup
 
 api = Api(api_v1_blueprint)
 

@@ -1,6 +1,6 @@
+from mongoengine import *
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from app.extensions import mongoengine
 from app.models import Base
 
 
@@ -9,33 +9,33 @@ class UserModel(Base):
         'collection': 'user'
     }
 
-    id = mongoengine.StringField(
+    id = StringField(
         primary_key=True,
         min_length=4,
         max_length=50
     )
 
-    pw = mongoengine.StringField(
+    pw = StringField(
         required=True
     )
 
-    email = mongoengine.StringField(
+    email = StringField(
         required=True
     )
 
-    name = mongoengine.StringField(
+    name = StringField(
         required=True,
         min_length=2,
         max_length=16
     )
 
-    nickname = mongoengine.StringField(
+    nickname = StringField(
         required=False,
         min_length=1,
         max_length=30
     )
 
-    bio = mongoengine.StringField(
+    bio = StringField(
         required=False,
         min_length=1,
         max_length=85

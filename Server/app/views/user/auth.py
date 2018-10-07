@@ -15,10 +15,10 @@ class Auth(BaseResource):
         id = payload['id']
         pw = payload['pw']
 
-        user = UserModel.certify(id, pw)
+        user = UserModel.get_user_as_login(id, pw)
 
         if not user:
-            abort(401)
+            abort(401, 'Invalid ID or PW.')
 
         args = [user, g.user_agent, g.remote_addr]
 
