@@ -3,7 +3,7 @@ from flask import jsonify
 
 def http_exception_handler(e):
     return jsonify({
-        'result': e.description,
+        'result': e.name,
         'hint': e.description
     }), e.code
 
