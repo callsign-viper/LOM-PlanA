@@ -25,12 +25,12 @@ class CheckEmailIsAvailable(BaseResource):
 
 class Signup(BaseResource):
     @validate_with_fields({
-        'id': StringField(min_length=UserModel.id.min_length, max_length=UserModel.id.max_length),
+        'id': StringField(min_length=4, max_length=50),
         'pw': StringField(),
         'email': StringField(regex=email_regex),
-        'name': StringField(min_length=UserModel.name.min_length, max_length=UserModel.name.max_length),
-        'nickname': StringField(required=False, min_length=UserModel.nickname.min_length, max_length=UserModel.nickname.max_length),
-        'bio': StringField(required=False, min_length=UserModel.bio.min_length, max_length=UserModel.bio.max_length)
+        'name': StringField(min_length=2, max_length=16),
+        'nickname': StringField(required=False, min_length=1, max_length=30),
+        'bio': StringField(required=False, min_length=1, max_length=85)
     })
     def post(self):
         payload = request.json
@@ -41,6 +41,9 @@ class Signup(BaseResource):
         nickname = payload.get('nickname')
         bio = payload.get('bio')
 
-        UserModel.signup(id, pw, email, name, nickname, bio)
+        res = UserModel.signup(id, pw, email, name, nickname, bio)
+
+        if not res:
+            abort(409)
 
         return Response('', 201)
