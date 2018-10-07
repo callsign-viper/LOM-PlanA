@@ -52,10 +52,10 @@ class UserModel(Base):
     @classmethod
     def signup(cls, id, plain_pw, email, name, nickname=None, bio=None):
         if cls.is_id_exist(id):
-            return False
+            return
 
         if cls.is_email_exist(email):
-            return False
+            return
 
         return cls(
             id=id,
@@ -67,13 +67,13 @@ class UserModel(Base):
         ).save()
 
     @classmethod
-    def certify(cls, id, plain_pw):
+    def get_user_as_login(cls, id: str, plain_pw: str):
         user = cls.objects(id=id).first()
 
         if not user:
-            return False
+            return
         else:
             if check_password_hash(user.pw, plain_pw):
                 return user
             else:
-                return False
+                return
