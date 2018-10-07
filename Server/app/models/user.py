@@ -1,3 +1,4 @@
+from flask import abort
 from mongoengine import *
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -50,12 +51,26 @@ class UserModel(Base):
         return bool(cls.objects(email=email))
 
     @classmethod
-    def signup(cls, id, plain_pw, email, name, nickname=None, bio=None):
+    def signup(cls, id: str, plain_pw: str, email: str, name: str, nickname: str=None, bio: str=None):
+        """
+        Creates new user.
+            aborts
+            - 409 when ID or email is already existing.
+
+        Args:
+            id: ID of user
+            plain_pw : Password of user as plain text
+            email: Email of user
+            name: Name of user
+            nickname: Nickname of user
+            bio: Bio of user
+        """
+
         if cls.is_id_exist(id):
-            return
+            abort(409, 'ID {} already exists.'.format(id))
 
         if cls.is_email_exist(email):
-            return
+            abort(409, 'Email {} already exists.'.format(email))
 
         return cls(
             id=id,

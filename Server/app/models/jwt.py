@@ -46,10 +46,10 @@ class TokenBase(Base):
         Create token with `create_token_func`
 
         Args:
-            create_token_func: token creation function in `flask_jwt_extended.utils`
-            user: instance from UserModel
-            user_agent: user agent of requested user ex) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100
-            remote_addr: remote ip address of requested user(x.x.x.x)
+            create_token_func: Token creation function in `flask_jwt_extended.utils`
+            user: Instance from UserModel
+            user_agent: User agent of requested user ex) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100
+            remote_addr: Remote ip address of requested user(x.x.x.x)
         """
 
         key = cls.Key(owner=user, user_agent=user_agent)
@@ -75,10 +75,9 @@ class TokenBase(Base):
 
         Args:
             identity: 'identity' claim's data of JWT payload
-            user_agent: user agent of requested user
-            remote_addr: remote ip address of requested user
+            user_agent: User agent of requested user
+            remote_addr: Remote ip address of requested user
         """
-
         try:
             token = cls.objects(identity=UUID(identity)).first()
 
