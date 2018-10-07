@@ -1,4 +1,5 @@
 from uuid import UUID, uuid4
+from typing import Callable
 
 from flask import abort
 from flask_jwt_extended import create_access_token, create_refresh_token
@@ -40,7 +41,17 @@ class TokenBase(Base):
     )
 
     @classmethod
-    def _create_token(cls, create_token_func, user, user_agent, remote_addr):
+    def _create_token(cls, create_token_func: Callable, user: UserModel, user_agent: str, remote_addr: str):
+        """
+        Create token with `create_token_func`
+
+        Args:
+            create_token_func: token creation function in `flask_jwt_extended.utils`
+            user: instance from UserModel
+            user_agent: user agent of requested user ex) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100
+            remote_addr: remote ip address of requested user(x.x.x.x)
+        """
+
         key = cls.Key(owner=user, user_agent=user_agent)
         cls.objects(key=key).delete()
 
@@ -54,7 +65,20 @@ class TokenBase(Base):
         return create_token_func(str(identity))
 
     @classmethod
-    def _certify(cls, identity, user_agent, remote_addr):
+    def _get_token_with_validation(cls, identity: str, user_agent: str, remote_addr: str):
+        """
+        Get token with validate token.
+            aborts
+            - 401 when `identity` is invalid
+            - 403 when the 'information of the requester' and the 'information of the token' are inconsistent
+            - 422 when `identity` can not be parsed as a UUID
+
+        Args:
+            identity: 'identity' claim's data of JWT payload
+            user_agent: user agent of requested user
+            remote_addr: remote ip address of requested user
+        """
+
         try:
             token = cls.objects(identity=UUID(identity)).first()
 
@@ -81,8 +105,8 @@ class AccessTokenModel(TokenBase):
         return cls._create_token(create_access_token, user, user_agent, remote_addr)
 
     @classmethod
-    def certify(cls, identity, user_agent, remote_addr):
-        return cls._certify(identity, user_agent, remote_addr)
+    def get_token_with_validation(cls, identity, user_agent, remote_addr):
+        return cls._get_token_with_validation(identity, user_agent, remote_addr)
 
 
 class RefreshTokenModel(TokenBase):
@@ -96,6 +120,6 @@ class RefreshTokenModel(TokenBase):
 
     @classmethod
     def refresh(cls, identity, user_agent, remote_addr):
-        token = cls._certify(identity, user_agent, remote_addr)
+        token = cls._get_token_with_validation(identity, user_agent, remote_addr)
 
         return cls.create_token(token.key.owner, user_agent, remote_addr)
