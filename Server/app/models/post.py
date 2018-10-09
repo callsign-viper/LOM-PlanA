@@ -1,6 +1,5 @@
 from typing import List
 
-from flask import current_app
 from mongoengine import *
 
 from app.models import Base

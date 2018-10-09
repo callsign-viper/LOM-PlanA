@@ -31,6 +31,9 @@ class Post(BaseResource):
         skip = int(request.args.get('skip', default_skip))
 
         return [{
+            'id': str(post.id),
             'owner': post.owner.name,
-            'content': post.content
+            'content': post.content,
+            'createdAt': post.created_at_str,
+            'updatedAt': post.updated_at_str
         } for post in PostModel.get_posts(size, skip)]
