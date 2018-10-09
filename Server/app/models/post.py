@@ -32,9 +32,6 @@ class PostModel(Base):
         Args:
             user: Instance of UserModel. The context in which this method is called will typically be in the g object.
             content: Content of post. length must between {} and {}.
-            
-        Returns:
-            PostModel
         """.format(cls.content.min_length, cls.content.max_length)
 
         return cls(
@@ -49,11 +46,7 @@ class PostModel(Base):
 
         Args:
             size: Number of posts to retrieve.
-            skip: Number of posts to skip
+            skip: Number of posts to skip.
         """
-        post_retrieve_config = current_app.config['POST_RETRIEVE_CONFIG']
-
-        size = size or post_retrieve_config['default_size']
-        skip = skip or post_retrieve_config['default_skip']
 
         return cls.objects.skip(skip).limit(size).order_by('-created_at')

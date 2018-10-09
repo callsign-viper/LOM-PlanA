@@ -1,4 +1,4 @@
-from flask import g, request
+from flask import current_app, g, request
 from flask_validation import validate_with_fields
 from flask_validation import StringField
 
@@ -22,8 +22,13 @@ class Post(BaseResource):
         }, 201
 
     def get(self):
-        size = request.args.get('size', None)
-        skip = request.args.get('skip', None)
+        post_retrieve_config = current_app.config['POST_RETRIEVE_CONFIG']
+        default_size = post_retrieve_config['default_size']
+        default_skip = post_retrieve_config['default_skip']
+        # default_size, default_skip = post_retrieve_config.values()도 가능하지만, 불필요하며 결합도만 늘어남
+
+        size = int(request.args.get('size', default_size))
+        skip = int(request.args.get('skip', default_skip))
 
         return [{
             'owner': post.owner.name,

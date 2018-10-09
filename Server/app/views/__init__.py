@@ -16,6 +16,8 @@ def access_token_required(fn):
         token = AccessTokenModel.get_token_with_validation(get_jwt_identity(), g.user_agent, g.remote_addr)
 
         g.user = token.key.owner
+        # flask_jwt_extended.JWTManager.user_loader_callback_loader 데코레이터를 사용할 수도 있으나,
+        # current_user가 LocalProxy로 감싸져서 다루기 힘듬
 
         return fn(*args, **kwargs)
     return wrapper
