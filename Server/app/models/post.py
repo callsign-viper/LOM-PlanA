@@ -1,5 +1,6 @@
 from typing import List
 
+from flask import abort
 from mongoengine import *
 
 from app.models import Base
@@ -49,3 +50,13 @@ class PostModel(Base):
         """
 
         return cls.objects.skip(skip).limit(size).order_by('-created_at')
+
+    @classmethod
+    def get_post_with_id(cls, id: str) -> 'PostModel':
+        """
+        Get post object with ID.
+
+        Args:
+            id: ObjectID for post
+        """
+        return cls.objects(id=id).first()

@@ -1,14 +1,16 @@
-from flask import current_app, g, request
+from flask import abort, current_app, g, request
 from flask_validation import validate_with_fields
 from flask_validation import StringField
 
 from app.models.post import PostModel
 from app.views import BaseResource, access_token_required
 
+_POST_CONTENT_TERM = StringField(min_length=PostModel.content.min_length, max_length=PostModel.content.max_length)
+
 
 class Post(BaseResource):
     @validate_with_fields({
-        'content': StringField(min_length=PostModel.content.min_length, max_length=PostModel.content.max_length),
+        'content': _POST_CONTENT_TERM,
     })
     @access_token_required
     def post(self):
@@ -37,3 +39,23 @@ class Post(BaseResource):
             'createdAt': post.created_at_str,
             'updatedAt': post.updated_at_str
         } for post in PostModel.get_posts(size, skip)]
+
+
+class PostItem(BaseResource):
+    @validate_with_fields({
+        'content': _POST_CONTENT_TERM,
+    })
+    def patch(self, id):
+        post = PostModel.get_post_with_id(id)
+
+        if not post:
+            abort(404)
+
+        payload = request.json
+        content = payload['content']
+
+        post.content = content
+        post.save()
+
+        return
+
