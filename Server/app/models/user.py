@@ -1,3 +1,5 @@
+from typing import Union
+
 from flask import abort
 from mongoengine import *
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -42,16 +44,38 @@ class UserModel(Base):
         max_length=85
     )
 
+    # is_id_exist = classmethod(lambda cls, id: bool(cls.objects(id=id)))
     @classmethod
-    def is_id_exist(cls, id):
+    def is_id_exist(cls, id: str) -> bool:
+        """
+        Check `id` is already exist in collection.
+
+        Args:
+            id: ID for check
+
+        Returns:
+            True if ID already exists, otherwise False.
+        """
+
         return bool(cls.objects(id=id))
 
+    # is_email_exist = classmethod(lambda cls, email: bool(cls.objects(email=email)))
     @classmethod
-    def is_email_exist(cls, email):
+    def is_email_exist(cls, email: str) -> bool:
+        """
+        Check `email` is already exist in collection.
+
+        Args:
+            email: email for check
+
+        Returns:
+            True if email already exists, otherwise False.
+        """
+
         return bool(cls.objects(email=email))
 
     @classmethod
-    def signup(cls, id: str, plain_pw: str, email: str, name: str, nickname: str=None, bio: str=None):
+    def signup(cls, id: str, plain_pw: str, email: str, name: str, nickname: str=None, bio: str=None) -> 'UserModel':
         """
         Creates new user.
             aborts
@@ -82,7 +106,15 @@ class UserModel(Base):
         ).save()
 
     @classmethod
-    def get_user_as_login(cls, id: str, plain_pw: str):
+    def get_user_as_login(cls, id: str, plain_pw: str) -> Union['UserModel', None]:
+        """
+        Get user as login with `id`, `plain_pw`
+
+        Args:
+            id: ID of user
+            plain_pw : Password of user as plain text
+        """
+
         user = cls.objects(id=id).first()
 
         if not user:
