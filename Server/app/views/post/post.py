@@ -20,3 +20,12 @@ class Post(BaseResource):
         return {
             'id': str(post.id)
         }, 201
+
+    def get(self):
+        size = request.args.get('size', None)
+        skip = request.args.get('skip', None)
+
+        return [{
+            'owner': post.owner.name,
+            'content': post.content
+        } for post in PostModel.get_posts(size, skip)]
