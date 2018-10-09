@@ -7,7 +7,7 @@ from app.hooks.error import broad_exception_error_handler, http_exception_handle
 from app.hooks.request import after_request, before_request
 
 # -- API load
-from app.views import user
+from app.views import post, user
 # --
 
 
