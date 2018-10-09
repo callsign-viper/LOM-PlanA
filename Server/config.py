@@ -43,6 +43,11 @@ class Config:
         ]
     }
 
+    POST_RETRIEVE_CONFIG = {
+        'default_skip': 0,
+        'default_size': 12
+    }
+
 
 class LocalDBConfig:
     MONGODB_SETTINGS = {
