@@ -19,5 +19,5 @@ def mongoengine_validation_error_handler(e):
 def broad_exception_error_handler(e):
     return jsonify({
         'result': 'Internal Server Error',
-        'msg': str(e),
+        'hint': str(e),
     }), 500
