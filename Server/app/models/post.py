@@ -100,8 +100,10 @@ class PostModel(Base):
 
         post.update(content=content)
 
+        return post
+
     @classmethod
-    def delete_post(cls, post: 'PostModel', requested_user: 'UserModel') -> 'PostModel':
+    def delete_post(cls, post: 'PostModel', requested_user: 'UserModel'):
         """
         Delete served `post`
 
