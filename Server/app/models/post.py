@@ -24,6 +24,16 @@ class PostModel(Base):
         max_length=3000
     )
 
+    @property
+    def json(self):
+        return {
+            'id': self.id_str,
+            'owner': self.owner.name,
+            'content': self.content,
+            'createdAt': self.created_at_str,
+            'updatedAt': self.updated_at_str
+        }
+
     @classmethod
     def post(cls, user: UserModel, content: str) -> 'PostModel':
         """
@@ -49,16 +59,21 @@ class PostModel(Base):
         ).save()
 
     @classmethod
-    def get_posts(cls, skip: int=None, size: int=None) -> List['PostModel']:
+    def get_posts(cls, user: 'UserModel'=None, skip: int=None, size: int=None) -> List['PostModel']:
         """
         Get list post.
 
         Args:
+            user: User object for filter
             skip: Number of posts to skip.
             size: Number of posts to retrieve.
         """
+        if user:
+            posts = cls.objects(owner=user)
+        else:
+            posts = cls.objects
 
-        return cls.objects[skip:skip + size].order_by('-created_at')
+        return posts[skip:skip + size].order_by('-created_at')
 
     @classmethod
     def get_post_with_id(cls, id: str) -> 'PostModel':
