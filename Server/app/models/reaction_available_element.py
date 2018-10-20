@@ -93,3 +93,35 @@ class PostModel(ReactionAvailableElement):
 
         return post
 
+
+class CommentModel(ReactionAvailableElement):
+    meta = {
+        'collection': 'comment'
+    }
+
+    post = ReferenceField(
+        document_type=PostModel,
+        reverse_delete_rule=CASCADE,
+        required=True
+    )
+
+    @classmethod
+    def create(cls, post: PostModel, user: UserModel, content: str) -> 'CommentModel':
+        return cls(
+            post=post,
+            owner=user,
+            content=content
+        ).save()
+
+    @classmethod
+    def list(cls, post: PostModel, skip: int=None, size: int=None) -> List['CommentModel']:
+        return cls.objects(post=post)[skip:skip + size].order_by('-created_at')
+
+    @classmethod
+    def get_by_id(cls, id: str) -> 'CommentModel':
+        comment = cls.objects(id=id).first()
+
+        if not comment:
+            raise NotFound('Comment {} does not exist'.format(id))
+
+        return comment
