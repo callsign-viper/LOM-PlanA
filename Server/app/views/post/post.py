@@ -1,4 +1,4 @@
-from flask import abort, current_app, g, request
+from flask import current_app, g, request
 from flask_validation import validate_with_fields
 from flask_validation import StringField
 
@@ -45,17 +45,21 @@ class PostItem(BaseResource):
     @validate_with_fields({
         'content': _POST_CONTENT_TERM,
     })
+    @access_token_required
     def patch(self, id):
         post = PostModel.get_post_with_id(id)
-
-        if not post:
-            abort(404)
 
         payload = request.json
         content = payload['content']
 
-        post.content = content
-        post.save()
+        PostModel.update_post(post, g.user, content)
 
         return
 
+    @access_token_required
+    def delete(self, id):
+        post = PostModel.get_post_with_id(id)
+
+        PostModel.delete_post(post, g.user)
+
+        return
