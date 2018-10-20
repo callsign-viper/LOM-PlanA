@@ -25,12 +25,12 @@ class Post(BaseResource):
 
     def get(self):
         post_retrieve_config = current_app.config['POST_RETRIEVE_CONFIG']
-        default_size = post_retrieve_config['default_size']
         default_skip = post_retrieve_config['default_skip']
+        default_size = post_retrieve_config['default_size']
         # default_size, default_skip = post_retrieve_config.values()도 가능하지만, 불필요하며 결합도만 늘어남
 
-        size = int(request.args.get('size', default_size))
         skip = int(request.args.get('skip', default_skip))
+        size = int(request.args.get('size', default_size))
 
         return [{
             'id': str(post.id),
@@ -38,7 +38,7 @@ class Post(BaseResource):
             'content': post.content,
             'createdAt': post.created_at_str,
             'updatedAt': post.updated_at_str
-        } for post in PostModel.get_posts(size, skip)]
+        } for post in PostModel.get_posts(skip, size)]
 
 
 class PostItem(BaseResource):

@@ -49,16 +49,16 @@ class PostModel(Base):
         ).save()
 
     @classmethod
-    def get_posts(cls, size: int=None, skip: int=None) -> List['PostModel']:
+    def get_posts(cls, skip: int=None, size: int=None) -> List['PostModel']:
         """
         Get list post.
 
         Args:
-            size: Number of posts to retrieve.
             skip: Number of posts to skip.
+            size: Number of posts to retrieve.
         """
 
-        return cls.objects.skip(skip).limit(size).order_by('-created_at')
+        return cls.objects[skip:skip + size].order_by('-created_at')
 
     @classmethod
     def get_post_with_id(cls, id: str) -> 'PostModel':
