@@ -99,3 +99,20 @@ class PostModel(Base):
             raise BadRequest('No changes detected in content.')
 
         post.update(content=content)
+
+    @classmethod
+    def delete_post(cls, post: 'PostModel', requested_user: 'UserModel') -> 'PostModel':
+        """
+        Delete served `post`
+
+        Args:
+            post: Post object to delete
+            requested_user: Requested user usually expressed as g.user
+
+        Raises:
+            Forbidden: `requested_user` does not have permission to delete `post`
+        """
+        if post.owner != requested_user:
+            raise Forbidden('You don\'t have permission to delete post {}'.format(post.id))
+
+        post.delete()
