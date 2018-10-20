@@ -18,6 +18,10 @@ class Base(Document):
     )
 
     @property
+    def id_str(self):
+        return str(self.id)
+
+    @property
     def created_at_str(self):
         return self.created_at.strftime('%Y-%m-%d %H:%M:%S')
 
