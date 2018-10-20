@@ -1,7 +1,7 @@
 from typing import List
 
-from flask import abort
 from mongoengine import *
+from werkzeug.exceptions import BadRequest, Forbidden, NotFound
 
 from app.models import Base
 from app.models.user import UserModel
@@ -32,7 +32,16 @@ class PostModel(Base):
         Args:
             user: Instance of UserModel. The context in which this method is called will typically be in the g object.
             content: Content of post. length must between {} and {}.
+        
+        Raises:
+            BadRequest: content validation failed.
         """.format(cls.content.min_length, cls.content.max_length)
+
+        if not cls.content.min_length < len(content) < cls.content.max_length:
+            raise BadRequest('content length must between {} and {}.'.format(
+                cls.content.min_length,
+                cls.content.max_length
+            ))
 
         return cls(
             owner=user,
@@ -54,9 +63,39 @@ class PostModel(Base):
     @classmethod
     def get_post_with_id(cls, id: str) -> 'PostModel':
         """
-        Get post object with ID.
+        Get post object with `id`.
 
         Args:
             id: ObjectID for post
+
+        Raises:
+            NotFound: Post for `id` does not exist
         """
-        return cls.objects(id=id).first()
+        post = cls.objects(id=id).first()
+
+        if not post:
+            raise NotFound('Post {} does not exist'.format(id))
+
+        return post
+
+    @classmethod
+    def update_post(cls, post: 'PostModel', requested_user: 'UserModel', content: str) -> 'PostModel':
+        """
+        Update data of served `post`
+
+        Args:
+            post: Post object to update
+            requested_user: Requested user usually expressed as g.user
+            content: Content of post
+
+        Raises:
+            BadRequest: No changed detected in content
+            Forbidden: `requested_user` does not have permission to update `post`
+        """
+        if post.owner != requested_user:
+            raise Forbidden('You don\'t have permission to update post {}'.format(post.id))
+
+        if post.content == content:
+            raise BadRequest('No changes detected in content.')
+
+        post.update(content=content)
