@@ -26,7 +26,7 @@ class CheckEmailIsAvailable(BaseResource):
 class Signup(BaseResource):
     @validate_with_fields({
         'id': StringField(min_length=UserModel.id.min_length, max_length=UserModel.id.max_length),
-        'pw': StringField(),
+        'pw': StringField(min_length=8),
         'email': StringField(regex=email_regex),
         'name': StringField(min_length=UserModel.name.min_length, max_length=UserModel.name.max_length),
         'nickname': StringField(required=False, min_length=UserModel.nickname.min_length, max_length=UserModel.nickname.max_length),
