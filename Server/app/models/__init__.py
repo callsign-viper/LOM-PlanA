@@ -29,3 +29,10 @@ class Base(Document):
         self.updated_at = datetime.now()
 
         return super(Base, self).save(*args, **kwargs)
+
+    def update(self, **kwargs):
+        kwargs.update({
+            'updated_at': datetime.now()
+        })
+
+        return super(Base, self).update(**kwargs)
