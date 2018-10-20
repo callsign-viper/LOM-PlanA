@@ -22,7 +22,7 @@ class UserModel(Base):
         required=True
     )
 
-    email = StringField(
+    email = EmailField(
         required=True
     )
 
