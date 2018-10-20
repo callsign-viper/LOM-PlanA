@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from mongoengine import *
+from werkzeug.exceptions import BadRequest
 
 
 class Base(Document):
@@ -29,8 +30,16 @@ class Base(Document):
     def updated_at_str(self):
         return self.updated_at.strftime('%Y-%m-%d %H:%M:%S')
 
+    def _validate(self):
+        try:
+            self.validate()
+        except ValidationError as e:
+            raise BadRequest('Validation failed - ' + ', '.join(e.to_dict().values()))
+
     def save(self, *args, **kwargs):
         self.updated_at = datetime.now()
+
+        self._validate()
 
         return super(Base, self).save(*args, **kwargs)
 
@@ -38,5 +47,7 @@ class Base(Document):
         kwargs.update({
             'updated_at': datetime.now()
         })
+
+        self._validate()
 
         return super(Base, self).update(**kwargs)
