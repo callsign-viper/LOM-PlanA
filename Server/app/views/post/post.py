@@ -2,10 +2,10 @@ from flask import current_app, g, request
 from flask_validation import validate_with_fields
 from flask_validation import StringField
 
-from app.models.post import PostModel
+from app.models.reaction_available_element import PostModel
 from app.views import BaseResource, access_token_required
 
-_POST_CONTENT_TERM = StringField(min_length=PostModel.content.min_length, max_length=PostModel.content.max_length)
+_POST_CONTENT_TERM = StringField(min_length=PostModel.content.min_length)
 
 
 class Post(BaseResource):
@@ -17,7 +17,7 @@ class Post(BaseResource):
         payload = request.json
         content = payload['content']
 
-        post = PostModel.post(g.user, content)
+        post = PostModel.create(g.user, content)
 
         return {
             'id': str(post.id)
@@ -32,13 +32,7 @@ class Post(BaseResource):
         skip = int(request.args.get('skip', default_skip))
         size = int(request.args.get('size', default_size))
 
-        return [{
-            'id': str(post.id),
-            'owner': post.owner.name,
-            'content': post.content,
-            'createdAt': post.created_at_str,
-            'updatedAt': post.updated_at_str
-        } for post in PostModel.get_posts(skip, size)]
+        return [post.json for post in PostModel.list(skip=skip, size=size)]
 
 
 class PostItem(BaseResource):
@@ -47,19 +41,19 @@ class PostItem(BaseResource):
     })
     @access_token_required
     def patch(self, id):
-        post = PostModel.get_post_with_id(id)
+        post = PostModel.get_by_id(id)
 
         payload = request.json
         content = payload['content']
 
-        PostModel.update_post(post, g.user, content)
+        post.update_(g.user, content)
 
         return
 
     @access_token_required
     def delete(self, id):
-        post = PostModel.get_post_with_id(id)
+        post = PostModel.get_by_id(id)
 
-        PostModel.delete_post(post, g.user)
+        post.delete_(g.user)
 
         return
