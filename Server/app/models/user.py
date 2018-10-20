@@ -1,7 +1,7 @@
 from typing import Union
 
-from flask import abort
 from mongoengine import *
+from werkzeug.exceptions import Conflict
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.models import Base
@@ -78,8 +78,6 @@ class UserModel(Base):
     def signup(cls, id: str, plain_pw: str, email: str, name: str, nickname: str=None, bio: str=None) -> 'UserModel':
         """
         Creates new user.
-            aborts
-            - 409 when ID or email is already existing.
 
         Args:
             id: ID of user
@@ -88,13 +86,16 @@ class UserModel(Base):
             name: Name of user
             nickname: Nickname of user
             bio: Bio of user
+
+        Raises:
+            Conflict: ID or email is already existing.
         """
 
         if cls.is_id_exist(id):
-            abort(409, 'ID {} already exists.'.format(id))
+            raise Conflict('ID {} already exists.'.format(id))
 
         if cls.is_email_exist(email):
-            abort(409, 'Email {} already exists.'.format(email))
+            raise Conflict('Email {} already exists.'.format(email))
 
         return cls(
             id=id,
