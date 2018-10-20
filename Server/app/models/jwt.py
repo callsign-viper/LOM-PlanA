@@ -1,9 +1,9 @@
 from uuid import UUID, uuid4
 from typing import Callable
 
-from flask import abort
 from flask_jwt_extended import create_access_token, create_refresh_token
 from mongoengine import *
+from werkzeug.exceptions import Unauthorized, Forbidden, UnprocessableEntity
 
 from app.models import Base
 from app.models.user import UserModel
@@ -68,30 +68,31 @@ class TokenBase(Base):
     def _get_token_with_validation(cls, identity: str, user_agent: str, remote_addr: str):
         """
         Get token with validate token.
-            aborts
-            - 401 when `identity` is invalid
-            - 403 when the 'information of the requester' and the 'information of the token' are inconsistent
-            - 422 when `identity` can not be parsed as a UUID
 
         Args:
             identity: 'identity' claim's data of JWT payload
             user_agent: User agent of requested user
             remote_addr: Remote ip address of requested user
+
+        Raises:
+            Unauthorized: `identity` is invalid(does not exist in token model due to blacklisted, logged out, etc.)
+            Forbidden: 'information of the requester' and the 'information of the token' are inconsistent
+            UnprocessableEntity: `identity` can not be parsed as a UUID
         """
         try:
             token = cls.objects(identity=UUID(identity)).first()
 
             if not token:
-                abort(401, 'invalid identity.')
+                raise Unauthorized('Invalid identity.')
 
             if token.key.user_agent != user_agent or token.client_ip != remote_addr:
                 # token generation 당시의 정보와 대조
-                abort(403)
+                raise Forbidden('You are not token owner.')
 
             return token
 
         except ValueError:
-            abort(422, 'token identity is invalid.')
+            raise UnprocessableEntity('Token identity can not be parsed as a UUID.')
 
 
 class AccessTokenModel(TokenBase):
