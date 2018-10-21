@@ -98,3 +98,17 @@ class UserModel(Base):
                 return user
             else:
                 raise Unauthorized('Invalid PW')
+
+    @classmethod
+    def get_user_with_id(cls, id: str) -> 'UserModel':
+        """
+        Raises:
+            NotFound: Can't find user
+        """
+
+        user = cls.objects(id=id).first()
+
+        if not user:
+            raise NotFound('There\'s no any user with ID : {}'.format(id))
+
+        return user

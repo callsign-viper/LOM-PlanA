@@ -8,7 +8,7 @@ from app.views import BaseResource
 
 class Timeline(BaseResource):
     def get(self, id):
-        user = UserModel.objects(id=id).first()
+        user = UserModel.get_user_with_id(id)
 
         skip = int(request.args.get('skip', cp.post_list_default_skip))
         size = int(request.args.get('size', cp.post_list_default_size))
