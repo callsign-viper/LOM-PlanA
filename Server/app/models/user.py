@@ -1,7 +1,5 @@
-from typing import Union
-
 from mongoengine import *
-from werkzeug.exceptions import Conflict, Unauthorized
+from werkzeug.exceptions import Conflict, NotFound, Unauthorized
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.models import Base
@@ -85,7 +83,7 @@ class UserModel(Base):
         ).save()
 
     @classmethod
-    def get_user_as_login(cls, id: str, plain_pw: str) -> Union['UserModel', None]:
+    def get_user_as_login(cls, id: str, plain_pw: str) -> 'UserModel':
         """
         Raises:
             Unauthorized: Can't find user

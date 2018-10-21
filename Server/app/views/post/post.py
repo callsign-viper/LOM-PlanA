@@ -26,13 +26,8 @@ class Post(BaseResource):
         }, 201
 
     def get(self):
-        post_retrieve_config = current_app.config['POST_RETRIEVE_CONFIG']
-        default_skip = post_retrieve_config['default_skip']
-        default_size = post_retrieve_config['default_size']
-        # default_size, default_skip = post_retrieve_config.values()도 가능하지만, 불필요하며 결합도만 늘어남
-
-        skip = int(request.args.get('skip', default_skip))
-        size = int(request.args.get('size', default_size))
+        skip = int(request.args.get('skip', cp.post_list_default_skip))
+        size = int(request.args.get('size', cp.post_list_default_size))
 
         return [post.json for post in PostModel.list(skip=skip, size=size)]
 

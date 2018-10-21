@@ -20,5 +20,17 @@ class _ContextProperty:
     def requested_user_obj(self) -> 'UserModel':
         return getattr(g, 'user', None)
 
+    @property
+    def post_retrieve_config(self) -> dict:
+        return current_app.config['POST_RETRIEVE_CONFIG']
+
+    @property
+    def post_list_default_skip(self) -> int:
+        return self.post_retrieve_config['default_skip']
+
+    @property
+    def post_list_default_size(self) -> int:
+        return self.post_retrieve_config['default_size']
+
 
 context_property = _ContextProperty()
