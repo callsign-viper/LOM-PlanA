@@ -10,8 +10,8 @@ flask-jwt-extended = "*"
 mongoengine = "*"
 flasgger = "*"
 flask-cors = "*"
-flask-validation = "*"
 flask-mongoengine = "*"
+flask-validation = "*"
 
 [dev-packages]
 
