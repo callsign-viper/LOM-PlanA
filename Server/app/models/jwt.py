@@ -42,16 +42,6 @@ class TokenBase(Base):
 
     @classmethod
     def _create_token(cls, create_token_func: Callable, user: UserModel, user_agent: str, remote_addr: str):
-        """
-        Create token with `create_token_func`
-
-        Args:
-            create_token_func: Token creation function in `flask_jwt_extended.utils`
-            user: Instance from UserModel
-            user_agent: User agent of requested user ex) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100
-            remote_addr: Remote ip address of requested user(x.x.x.x)
-        """
-
         key = cls.Key(owner=user, user_agent=user_agent)
         cls.objects(key=key).delete()
 
@@ -67,13 +57,6 @@ class TokenBase(Base):
     @classmethod
     def _get_token_with_validation(cls, identity: str, user_agent: str, remote_addr: str):
         """
-        Get token with validate token.
-
-        Args:
-            identity: 'identity' claim's data of JWT payload
-            user_agent: User agent of requested user
-            remote_addr: Remote ip address of requested user
-
         Raises:
             Unauthorized: `identity` is invalid(does not exist in token model due to blacklisted, logged out, etc.)
             Forbidden: 'information of the requester' and the 'information of the token' are inconsistent

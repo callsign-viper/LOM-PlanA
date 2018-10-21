@@ -1,4 +1,4 @@
-from flask import abort, g, request
+from flask import g, request
 from flask_jwt_extended import get_jwt_identity, jwt_refresh_token_required
 from flask_validation import validate_common
 
@@ -17,14 +17,11 @@ class Auth(BaseResource):
 
         user = UserModel.get_user_as_login(id, pw)
 
-        if not user:
-            abort(401, 'Invalid ID or PW.')
-
-        args = [user, g.user_agent, g.remote_addr]
+        create_token_args = [user, g.user_agent, g.remote_addr]
 
         return {
-            'accessToken': AccessTokenModel.create_token(*args),
-            'refreshToken': RefreshTokenModel.create_token(*args)
+            'accessToken': AccessTokenModel.create_token(*create_token_args),
+            'refreshToken': RefreshTokenModel.create_token(*create_token_args)
         }
 
 

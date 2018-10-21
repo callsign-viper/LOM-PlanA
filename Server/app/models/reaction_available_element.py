@@ -8,6 +8,10 @@ from app.models.user import UserModel
 
 
 class ReactionAvailableElement(Base):
+    """
+    1. Post와 Comment는 비슷한 부분이 많아 이들을 추상화하고,
+    2. reaction은 post던 comment던 로직이 동일하기 때문에
+    """
     meta = {
         'abstract': True,
         'allow_inheritance': True
@@ -27,6 +31,7 @@ class ReactionAvailableElement(Base):
     reaction_counts = DictField(
         default={}
     )
+    # reaction type별 count
     # object마다 reaction model에 접근하면 쿼리 타임이 높아지므로 역정규화
 
     @property
@@ -86,6 +91,11 @@ class PostModel(ReactionAvailableElement):
 
     @classmethod
     def get_by_id(cls, id: str) -> 'PostModel':
+        """
+        Raises:
+            NotFound: Can't find post
+        """
+
         post = cls.objects(id=id).first()
 
         if not post:
@@ -119,6 +129,11 @@ class CommentModel(ReactionAvailableElement):
 
     @classmethod
     def get_by_id(cls, id: str) -> 'CommentModel':
+        """
+        Raises:
+            NotFound: Can't find comment
+        """
+
         comment = cls.objects(id=id).first()
 
         if not comment:
