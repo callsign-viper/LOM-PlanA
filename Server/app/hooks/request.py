@@ -1,15 +1,13 @@
 from datetime import datetime
 import json
 
-from flask import abort, g, request
+from flask import abort, request
 
 
 def before_request():
+    # 요청 처리가 시작되기 전에 입구컷 해주는 역할
     if 'user_agent' not in request.headers:
         abort(406, 'bring user agent')
-
-    g.user_agent = request.headers['user_agent']
-    g.remote_addr = request.remote_addr
 
 
 def after_request(response):

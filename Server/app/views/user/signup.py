@@ -1,5 +1,5 @@
 from flask import Response, abort, request
-from flask_validation import validate_with_fields
+from flask_validation import json_required, validate_with_fields
 from flask_validation import StringField
 from flask_validation.common_regex import email as email_regex
 
@@ -24,6 +24,7 @@ class CheckEmailIsAvailable(BaseResource):
 
 
 class Signup(BaseResource):
+    @json_required
     @validate_with_fields({
         'id': StringField(min_length=UserModel.id.min_length, max_length=UserModel.id.max_length),
         'pw': StringField(min_length=8),

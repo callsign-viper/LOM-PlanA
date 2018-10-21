@@ -1,9 +1,10 @@
-from flask import current_app, g, request
-from flask_validation import validate_with_fields
+from flask import current_app, request
+from flask_validation import json_required, validate_with_fields
 from flask_validation import StringField
 
+from app.context import context_property as cp
 from app.models.reaction_available_element import PostModel
-from app.views import BaseResource, access_token_required
+from app.views import BaseResource, jwt_required
 
 _POST_CONTENT_TERM = StringField(min_length=PostModel.content.min_length)
 
@@ -12,12 +13,13 @@ class Post(BaseResource):
     @validate_with_fields({
         'content': _POST_CONTENT_TERM,
     })
-    @access_token_required
+    @json_required
+    @jwt_required
     def post(self):
         payload = request.json
         content = payload['content']
 
-        post = PostModel.create(g.user, content)
+        post = PostModel.create(cp.requested_user_obj, content)
 
         return {
             'id': str(post.id)
@@ -39,21 +41,22 @@ class PostItem(BaseResource):
     @validate_with_fields({
         'content': _POST_CONTENT_TERM,
     })
-    @access_token_required
+    @json_required
+    @jwt_required
     def patch(self, id):
         post = PostModel.get_by_id(id)
 
         payload = request.json
         content = payload['content']
 
-        post.update_(g.user, content)
+        post.update_(cp.requested_user_obj, content)
 
         return
 
-    @access_token_required
+    @jwt_required
     def delete(self, id):
         post = PostModel.get_by_id(id)
 
-        post.delete_(g.user)
+        post.delete_(cp.requested_user_obj)
 
         return

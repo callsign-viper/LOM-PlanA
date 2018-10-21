@@ -84,11 +84,11 @@ class AccessTokenModel(TokenBase):
     }
 
     @classmethod
-    def create_token(cls, user, user_agent, remote_addr):
+    def create_token(cls, user: UserModel, user_agent: str, remote_addr: str):
         return cls._create_token(create_access_token, user, user_agent, remote_addr)
 
     @classmethod
-    def get_token_with_validation(cls, identity, user_agent, remote_addr):
+    def get_token_with_validation(cls, identity: str, user_agent: str, remote_addr: str):
         return cls._get_token_with_validation(identity, user_agent, remote_addr)
 
 
@@ -98,11 +98,11 @@ class RefreshTokenModel(TokenBase):
     }
 
     @classmethod
-    def create_token(cls, user, user_agent, remote_addr):
+    def create_token(cls, user: UserModel, user_agent: str, remote_addr: str):
         return cls._create_token(create_refresh_token, user, user_agent, remote_addr)
 
     @classmethod
-    def refresh(cls, identity, user_agent, remote_addr):
+    def refresh(cls, identity: str, user_agent: str, remote_addr: str):
         token = cls._get_token_with_validation(identity, user_agent, remote_addr)
 
         return cls.create_token(token.key.owner, user_agent, remote_addr)

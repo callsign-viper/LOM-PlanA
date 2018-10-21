@@ -3,15 +3,15 @@ import json
 import time
 
 from flask import Response, g
-from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_jwt_extended import get_jwt_identity, jwt_required as jwt_required_
 from flask_restful import Resource
 
 from app.models.jwt import AccessTokenModel
 
 
-def access_token_required(fn):
+def jwt_required(fn):
     @wraps(fn)
-    @jwt_required
+    @jwt_required_
     def wrapper(*args, **kwargs):
         token = AccessTokenModel.get_token_with_validation(get_jwt_identity(), g.user_agent, g.remote_addr)
 
