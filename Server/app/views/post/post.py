@@ -1,9 +1,9 @@
-from flask import current_app, request
+from flask import request
 from flask_validation import json_required, validate_with_fields
 from flask_validation import StringField
 
 from app.context import context_property as cp
-from app.models.reaction_available_element import PostModel
+from app.models.reaction_available_element import CommentModel, PostModel
 from app.views import BaseResource, jwt_required
 
 _POST_CONTENT_TERM = StringField(min_length=PostModel.content.min_length)
@@ -33,6 +33,14 @@ class Post(BaseResource):
 
 
 class PostItem(BaseResource):
+    def get(self, id):
+        post = PostModel.get_by_id(id)
+
+        skip = int(request.args.get('skip', cp.post_list_default_skip))
+        size = int(request.args.get('size', cp.post_list_default_size))
+
+        return [comment.json for comment in CommentModel.list(post, skip, size)]
+
     @validate_with_fields({
         'content': _POST_CONTENT_TERM,
     })
