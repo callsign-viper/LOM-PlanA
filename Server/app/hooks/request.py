@@ -24,11 +24,16 @@ def after_request(response):
                     'at': now_str
                 })
             else:
-                response_payload.update({
-                    'at': now_str
-                })
-                # for 'upsert' dictionary item
-                response.data = json.dumps(response_payload)
+                if isinstance(response_payload, dict) and 'at' in response_payload and 'data' in response_payload:
+                    # 이미 { 'at': '...', 'data': ... } 포맷이라면
+                    pass
+                else:
+                    response_payload = {
+                        'at': now_str,
+                        'data': response_payload
+                    }
+
+                    response.data = json.dumps(response_payload)
 
     finally:
         return response
