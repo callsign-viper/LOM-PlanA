@@ -35,7 +35,7 @@ def register_hooks(flask_app: Flask):
     from app.hooks.error import (
         http_exception_handler, mongoengine_validation_error_handler, broad_exception_error_handler
     )
-    from app.hooks.request import after_request, before_request
+    from app.hooks.request_context import after_request, before_request
 
     flask_app.after_request(after_request)
     flask_app.before_request(before_request)
