@@ -1,4 +1,5 @@
 from flask import Flask
+from werkzeug.exceptions import HTTPException
 
 
 def register_extensions(flask_app):
@@ -30,7 +31,6 @@ def register_blueprints(flask_app):
 
 def register_hooks(flask_app: Flask):
     from mongoengine import ValidationError
-    from werkzeug.exceptions import HTTPException
 
     from app.hooks.error import (
         http_exception_handler, mongoengine_validation_error_handler, broad_exception_error_handler
