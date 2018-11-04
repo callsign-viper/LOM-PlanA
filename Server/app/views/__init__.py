@@ -1,6 +1,5 @@
 from functools import wraps
 import json
-import time
 
 from flask import Response, g
 from flask_jwt_extended import get_jwt_identity, jwt_required as jwt_required_
@@ -25,9 +24,6 @@ def jwt_required(fn):
 
 
 class BaseResource(Resource):
-    def __init__(self):
-        self.now = time.strftime('%Y-%m-%d %H:%M:%S')
-
     @classmethod
     def unicode_safe_json_dumps(cls, data, status_code=200, **kwargs) -> Response:
         return Response(
