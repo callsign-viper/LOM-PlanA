@@ -1,5 +1,5 @@
 from flask import jsonify
-from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import BadRequest, InternalServerError
 
 
 def http_exception_handler(e):
@@ -18,6 +18,6 @@ def mongoengine_validation_error_handler(e):
 
 def broad_exception_error_handler(e):
     return jsonify({
-        'result': 'Internal Server Error',
+        'result': InternalServerError.description,
         'hint': str(e),
     }), 500
